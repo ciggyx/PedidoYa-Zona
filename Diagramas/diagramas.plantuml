@@ -12,6 +12,7 @@ class Delivery{
     - location : Location
     - radius
     - status
+    - zones : Zone
 }
 
 class Location{
@@ -21,4 +22,5 @@ class Location{
 
 Zone --> Location
 Delivery --> Location
+Delivery --> Zone
 @enduml
