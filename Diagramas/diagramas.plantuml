@@ -1,26 +1,62 @@
 @startuml Diagrama_de_clases_zona
+
 class Zone{
-    - id
     - name
     - location : Location
+    - delivery : Delivery
     - radius
+    + new()
+    + getName()
+    + getLocation()
+    + setName()
+    + setLocation()
+    + getRadius()
+    + setRadius()
+    + getDelivery()
+    + setDelivery()
 }
-
 class Delivery{
-    - id
-    - personId
     - location : Location
     - radius
-    - status
-    - zones : Zone
+    - status: Status
+    + new()
+    + getRadius()
+    + setRadius()
+    + getStatus()
+    + setStatus()
+    + getLocation()
+    + setLocation()
+    + getDelivery()
+    + setDelivery()
+    + getStatus()
+    + setStatus()
 }
-
 class Location{
     - latitud
     - longitud
+    + new()
+    + getLatitud()
+    + getLongitud()
+    + setLatitud()
+    + setLongitud()
+}
+
+class Status{
+    - name
+    - description
+    + new()
+    + getName()
+    + getDescription()
+    + setName()
+    + setDescription()
+
 }
 
 Zone --> Location
-Delivery --> Location
-Delivery --> Zone
+Zone -> Delivery
+Delivery -> Status
+@enduml
+
+@startuml Diagrama de Transición de Estado
+
 @enduml
