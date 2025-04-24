@@ -1,4 +1,18 @@
-@startuml Diagrama de clases Zona
+@startuml Diagrama_de_clases_zona
+class Zone{
+    - id
+    - name
+    - location
+    - radius
+}
 
+class Delivery{
+    - id
+    - personId
+    - location
+    - radius
+    - status
+}
 
+class 
 @enduml
