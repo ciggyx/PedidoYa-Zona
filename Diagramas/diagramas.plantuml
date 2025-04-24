@@ -2,17 +2,23 @@
 class Zone{
     - id
     - name
-    - location
+    - location : Location
     - radius
 }
 
 class Delivery{
     - id
     - personId
-    - location
+    - location : Location
     - radius
     - status
 }
 
-class 
+class Location{
+    - latitud
+    - longitud
+}
+
+Zone --> Location
+Delivery --> Location
 @enduml
