@@ -1,0 +1,32 @@
+version: '3.8'
+networks:
+  net:
+    external: false
+
+volumes:
+  postgres-db:
+    external: false
+
+services:
+  db:
+    image: postgres:alpine
+    env_file:
+      - .env.db
+    environment:
+      - POSTGRES_INITDB_ARGS=--auth-host=md5 --auth-local=trust
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready" ]
+      interval: 10s
+      timeout: 2s
+      retries: 5
+    volumes:
+      - postgres-db:/var/lib/postgresql/data
+    networks:
+      - net
+   ports:
+      - 3007:5432
+    depends_on:
+      - db
+    networks:
+      - net
+
