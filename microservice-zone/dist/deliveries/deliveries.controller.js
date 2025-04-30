@@ -56,7 +56,7 @@ __decorate([
     (0, common_1.Get)(':id'),
     __param(0, (0, common_1.Param)('id')),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String]),
+    __metadata("design:paramtypes", [Number]),
     __metadata("design:returntype", void 0)
 ], DeliveriesController.prototype, "findOne", null);
 __decorate([
@@ -64,14 +64,14 @@ __decorate([
     __param(0, (0, common_1.Param)('id')),
     __param(1, (0, common_1.Body)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, update_delivery_dto_1.UpdateDeliveryDto]),
+    __metadata("design:paramtypes", [Number, update_delivery_dto_1.UpdateDeliveryDto]),
     __metadata("design:returntype", void 0)
 ], DeliveriesController.prototype, "update", null);
 __decorate([
     (0, common_1.Delete)(':id'),
     __param(0, (0, common_1.Param)('id')),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String]),
+    __metadata("design:paramtypes", [Number]),
     __metadata("design:returntype", void 0)
 ], DeliveriesController.prototype, "remove", null);
 exports.DeliveriesController = DeliveriesController = __decorate([
