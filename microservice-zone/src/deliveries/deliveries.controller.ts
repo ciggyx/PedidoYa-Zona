@@ -16,19 +16,20 @@ export class DeliveriesController {
   findAll() {
     return this.deliveriesService.findAll();
   }
-
+  //Cambio el tipo de dato del id a number para luego poder validarlo con Class validator.
+  //Nos va a servir para validar todos los datos de entrada que tengamos
   @Get(':id')
-  findOne(@Param('id') id: string) {
+  findOne(@Param('id') id: number) {
     return this.deliveriesService.findOne(+id);
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateDeliveryDto: UpdateDeliveryDto) {
+  update(@Param('id') id: number, @Body() updateDeliveryDto: UpdateDeliveryDto) {
     return this.deliveriesService.update(+id, updateDeliveryDto);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
+  remove(@Param('id') id: number) {
     return this.deliveriesService.remove(+id);
   }
 }
