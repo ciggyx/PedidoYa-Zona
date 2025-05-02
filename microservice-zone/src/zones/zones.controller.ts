@@ -24,7 +24,7 @@ export class ZonesController {
 
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateZoneDto: UpdateZoneDto) {
-    return this.zonesService.update(+id, updateZoneDto);
+    return this.zonesService.update(Number(id));
   }
 
   @Delete(':id')
