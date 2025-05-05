@@ -1,11 +1,21 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe } from '@nestjs/common';
 import { DeliveriesService } from './deliveries.service';
 import { CreateDeliveryDto } from './dto/create-delivery.dto';
 import { UpdateDeliveryDto } from './dto/update-delivery.dto';
+import { AssignZoneDto } from './dto/assign-zone.dto';
+import { Delivery } from './entities/delivery.entity';
 
 @Controller('deliveries')
 export class DeliveriesController {
   constructor(private readonly deliveriesService: DeliveriesService) {}
+
+  @Post(':id/assignZone')
+  assignZone(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() dto: AssignZoneDto,
+  ): Promise<Delivery> {
+    return this.deliveriesService.assignZones(id, dto);
+  }
 
   @Post()
   create(@Body() createDeliveryDto: CreateDeliveryDto) {

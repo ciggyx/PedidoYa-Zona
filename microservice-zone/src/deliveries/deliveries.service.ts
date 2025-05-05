@@ -1,8 +1,10 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import { CreateDeliveryDto } from './dto/create-delivery.dto';
 import { UpdateDeliveryDto } from './dto/update-delivery.dto';
+import { AssignZoneDto } from './dto/assign-zone.dto';
+import { Zone } from 'src/zones/entities/zone.entity';
 import { Delivery } from './entities/delivery.entity';
 import { Location } from 'src/location/entities/location.entity';
 import { DeliveryStatus } from 'src/delivery-status/entities/delivery-status.entity';
@@ -18,6 +20,9 @@ export class DeliveriesService {
 
     @InjectRepository(DeliveryStatus)
     private readonly deliveryStatusRepository: Repository<DeliveryStatus>,
+
+    @InjectRepository(Zone)
+    private readonly ZoneRepository: Repository<Zone>,
   ) {}
 
   async create(createDeliveryDto: CreateDeliveryDto): Promise<Delivery> {
@@ -62,5 +67,23 @@ export class DeliveriesService {
   async remove(id: number): Promise<void> {
     await this.deliveryRepository.delete(id);
   }
+
+  async assignZones(deliveryId: number, dto: AssignZoneDto): Promise<Delivery> {
+    const delivery = await this.deliveryRepository.findOne({ where: { id: deliveryId } });
+    if (!delivery) {
+      throw new NotFoundException(`Delivery con id ${deliveryId} no existe`);
+    }
+
+    const zones = await this.ZoneRepository.find({
+      where: { id: In(dto.zoneIds) },
+    });
+    if (zones.length !== dto.zoneIds.length) {
+      throw new NotFoundException(`Alguna zona enviada no existe`);
+    }
+
+    delivery.zones = zones;
+    return this.deliveryRepository.save(delivery);
+  }
+
 }
 
