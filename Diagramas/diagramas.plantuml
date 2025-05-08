@@ -57,6 +57,46 @@ Zone -> Delivery
 Delivery -> Status
 @enduml
 
-@startuml Diagrama de Transición de Estado
+@startuml Diagrama de Entidad Relacion
 
+entity Delivery{
+    -id<<PK>>
+    -address
+    -personID
+    -radius
+    -statusID<<FK>>
+    -locationID<<FK>>
+}
+
+entity DeliveryZones{
+    -id<<PK>>
+    -deliveryID<<FK>>
+    -zoneID<<FK>>
+}
+
+entity Zone {
+    -id<<PK>>
+    -name
+    -radius
+    -locationID<<FK>>
+}
+
+entity Location{
+    -id<<PK>>
+    -lat
+    -lng
+}
+
+entity DeliveryStatus{
+    -id<<PK>>
+    -name
+}
+
+Delivery }|--|| DeliveryStatus
+Delivery ||--|| Location
+
+DeliveryZones }|--|| Delivery
+DeliveryZones }|--|| Zone
+
+Zone }|--|| Location
 @enduml
