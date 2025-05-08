@@ -1,5 +1,11 @@
-import {Column, Entity, PrimaryGeneratedColumn} from 'typeorm';
-import {Location} from '../../location/entities/location.entity';
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  OneToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
+import { Location } from '../../location/entities/location.entity';
 
 @Entity('Zone')
 export class Zone {
@@ -9,13 +15,14 @@ export class Zone {
   @Column()
   name: string;
 
-  @Column(()=>Location)
+  @OneToOne(() => Location)
+  @JoinColumn()
   location: Location;
-  
+
   @Column()
   radius: number;
 
-  constructor(id: number, name: string, location:Location, radius: number) {
+  constructor(id: number, name: string, location: Location, radius: number) {
     this.id = id;
     this.name = name;
     this.radius = radius;
