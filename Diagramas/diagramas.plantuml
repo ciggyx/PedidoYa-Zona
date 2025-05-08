@@ -98,5 +98,5 @@ Delivery ||--|| Location
 DeliveryZones }|--|| Delivery
 DeliveryZones }|--|| Zone
 
-Zone }|--|| Location
+Zone ||--|| Location
 @enduml
