@@ -5,6 +5,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Zone } from './entities/zone.entity';
 import { Location } from 'src/location/entities/location.entity';
+import { ReplaceZoneDto } from './dto/replace-zone.dto';
 
 @Injectable()
 export class ZonesService {
@@ -24,6 +25,26 @@ export class ZonesService {
 
   findOne(id: number) {
     return `This action returns a #${id} zone`;
+  }
+
+  async replace(id: number, dto: ReplaceZoneDto): Promise<Zone> {
+    const existingZone = await this.zoneRepository.findOne({
+      where: { id },
+      relations: ['location'],
+    });
+
+    if (!existingZone) {
+      throw new NotFoundException(`Zone with id ${id} not found`);
+    }
+
+    const newLocation = this.locationRepository.create(dto.location);
+    await this.locationRepository.save(newLocation);
+
+    existingZone.name = dto.name;
+    existingZone.radius = dto.radius;
+    existingZone.location = newLocation;
+
+    return await this.zoneRepository.save(existingZone);
   }
 
   async update(id: number, updateZoneDto: UpdateZoneDto): Promise<Zone> {
