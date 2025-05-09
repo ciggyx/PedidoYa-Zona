@@ -21,20 +21,20 @@ export class DeliveriesService {
   ) {}
 
   async create(createDeliveryDto: CreateDeliveryDto): Promise<Delivery> {
-    const { location, status, ...rest } = createDeliveryDto;
+    const { location, statusId, ...rest } = createDeliveryDto;
 
     // creo la ubicacion
     const newLocation = this.locationRepository.create(location);
     await this.locationRepository.save(newLocation);
 
     // busco el estado o x defecto esta como disponible
-    const deliveryStatus = await this.deliveryStatusRepository.findOne({
-      where: { name: status ?? 'available' },
-    });
+    const DEFAULT_STATUS_ID = 1;
+    const deliveryStatus = await this.deliveryStatusRepository.findOne({where: { id: createDeliveryDto.statusId ?? DEFAULT_STATUS_ID },
+});
 
-    if (!deliveryStatus) {
-      throw new NotFoundException(`DeliveryStatus "${status ?? 'available'}" no encontrado`);
-    }
+if (!deliveryStatus) {
+  throw new NotFoundException(`DeliveryStatus con id "${createDeliveryDto.statusId ?? DEFAULT_STATUS_ID}" no encontrado`);
+}
 
     // Crear y guardar el delivery
     const delivery = this.deliveryRepository.create({
