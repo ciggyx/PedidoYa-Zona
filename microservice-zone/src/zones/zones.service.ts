@@ -4,11 +4,14 @@ import { UpdateZoneDto } from './dto/update-zone.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Zone } from './entities/zone.entity';
+import { Location } from 'src/location/entities/location.entity';
 
 @Injectable()
 export class ZonesService {
   constructor(
     @InjectRepository(Zone) private readonly zoneRepository: Repository<Zone>,
+    @InjectRepository(Location)
+    private readonly locationRepository: Repository<Location>,
   ) {}
 
   create(createZoneDto: CreateZoneDto) {
@@ -23,8 +26,28 @@ export class ZonesService {
     return `This action returns a #${id} zone`;
   }
 
-  update(id: number) {
-    return `Butaso el que lee`;
+  async update(id: number, updateZoneDto: UpdateZoneDto): Promise<Zone> {
+    const zone = await this.zoneRepository.findOne({
+      where: { id },
+      relations: ['location'],
+    });
+
+    if (!zone) {
+      throw new NotFoundException(`Zone with id ${id} not found`);
+    }
+
+    if (updateZoneDto.name !== undefined) zone.name = updateZoneDto.name;
+    if (updateZoneDto.radius !== undefined) zone.radius = updateZoneDto.radius;
+
+    if (updateZoneDto.location) {
+      const newLocation = this.locationRepository.create(
+        updateZoneDto.location,
+      );
+      await this.locationRepository.save(newLocation);
+      zone.location = newLocation;
+    }
+
+    return await this.zoneRepository.save(zone);
   }
 
   async remove(id: number): Promise<void> {
