@@ -10,7 +10,7 @@ import {
 } from 'typeorm';
 import { Location } from 'src/location/entities/location.entity';
 import { DeliveryStatus } from 'src/delivery-status/entities/delivery-status.entity';
-import { Zone } from 'src/zones/entities/zone.entity';
+
 @Entity('deliveries')
 export class Delivery {
   @PrimaryGeneratedColumn()
@@ -35,10 +35,6 @@ export class Delivery {
   @OneToOne(() => Location)
   @JoinColumn()
   location: Location;
-
-  @ManyToMany(() => Zone)
-  @JoinTable({ name: 'DeliveryPerZone' })
-  zones: Zone[];
 
   constructor(
     id: number,
