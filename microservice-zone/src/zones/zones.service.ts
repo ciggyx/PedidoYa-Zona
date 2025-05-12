@@ -15,16 +15,28 @@ export class ZonesService {
     private readonly locationRepository: Repository<Location>,
   ) {}
 
-  create(createZoneDto: CreateZoneDto) {
-    return 'This action adds a new zone';
+  async create(createZoneDto: CreateZoneDto): Promise<Zone> {
+    const { location, ...rest } = createZoneDto;
+
+    // Crear y guardar la ubicación
+    const newLocation = this.locationRepository.create(location);
+    await this.locationRepository.save(newLocation);
+
+    // Crear y guardar la zona
+    const zone = this.zoneRepository.create({
+      ...rest,
+      location: newLocation,
+    });
+    return await this.zoneRepository.save(zone);
   }
 
-  async findAll() {
-    return await this.zoneRepository.find();
+
+  findAll() {
+    return this.zoneRepository.find();
   }
 
   findOne(id: number) {
-    return `This action returns a #${id} zone`;
+    return this.zoneRepository.findOne({ where: { id } });
   }
 
   async replace(id: number, dto: ReplaceZoneDto): Promise<Zone> {
