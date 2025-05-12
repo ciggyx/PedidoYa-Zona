@@ -1,7 +1,19 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  Put,
+} from '@nestjs/common';
 import { DeliveriesService } from './deliveries.service';
 import { CreateDeliveryDto } from './dto/create-delivery.dto';
 import { UpdateDeliveryDto } from './dto/update-delivery.dto';
+import { UpdateLocationDto } from './dto/updateLocation.dto';
+import { Delivery } from './entities/delivery.entity';
+import { CreateLocationDto } from 'src/location/dto/create-location.dto';
 
 @Controller('deliveries')
 export class DeliveriesController {
@@ -22,9 +34,19 @@ export class DeliveriesController {
   findOne(@Param('id') id: number) {
     return this.deliveriesService.findOne(+id);
   }
+  @Put(':id/location')
+  async updateLocation(
+    @Param('id') id: number,
+    @Body() updateLocationDto: UpdateLocationDto,
+  ): Promise<Delivery> {
+    return this.deliveriesService.updateLocation(id, updateLocationDto);
+  }
 
   @Patch(':id')
-  update(@Param('id') id: number, @Body() updateDeliveryDto: UpdateDeliveryDto) {
+  update(
+    @Param('id') id: number,
+    @Body() updateDeliveryDto: UpdateDeliveryDto,
+  ) {
     return this.deliveriesService.update(+id, updateDeliveryDto);
   }
 
