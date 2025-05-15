@@ -12,6 +12,21 @@ export class DeliveryZoneController {
     @Body() body: CreateDeliveryZones,
   ) {
     await this.deliveryZoneService.assignZonesToDelivery(id, body.zoneIds);
-    return { message: 'Zones assigned successfully' };
+      return { message: 'Zones assigned successfully' };
+  }
+
+  @Get(':id/zones')
+  async getZones(@Param('id', ParseIntPipe) id: number) {
+    const zones = await this.deliveryZoneService.getZonesByDeliveryId(id);
+    return zones;
+  }
+
+  @Delete(':id/zone/:zoneId')
+  async removeZone(
+    @Param('id', ParseIntPipe) deliveryId: number,
+    @Param('zoneId', ParseIntPipe) zoneId: number,
+  ) {
+    await this.deliveryZoneService.unassignZone(deliveryId, zoneId);
+      return { message: `Zone ${zoneId} unassigned from delivery ${deliveryId}` };
   }
 }

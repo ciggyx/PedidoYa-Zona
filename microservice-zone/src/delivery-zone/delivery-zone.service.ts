@@ -35,4 +35,21 @@ export class DeliveryZoneService {
       }
     }
   }
+  async getZonesByDeliveryId(deliveryId: number): Promise<Zone[]> {
+    const zones = await this.deliveryZoneRepository.find({
+      where: { deliveryId },
+      relations: ['zone'], // cargamos la zona relacionada
+    });
+
+    return zones.map(dz => dz.zone);
+  }
+
+  async unassignZone(deliveryId: number, zoneId: number): Promise<void> {
+    const exists = await this.deliveryZoneRepository.findOneBy({ deliveryId, zoneId });
+    if (!exists) {
+      throw new NotFoundException(`Zone ${zoneId} is not assigned to delivery ${deliveryId}`);
+    }
+
+    await this.deliveryZoneRepository.delete({ deliveryId, zoneId });
+  }
 }
