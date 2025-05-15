@@ -1,7 +1,6 @@
 import { Type } from 'class-transformer';
 import {
   IsInt,
-  IsOptional,
   IsPositive,
   IsString,
   MaxLength,
@@ -9,12 +8,7 @@ import {
 } from 'class-validator';
 import { CreateLocationDto } from 'src/location/dto/create-location.dto';
 
-export class CreateZoneDto {
-  @IsInt()
-  @IsPositive()
-  @IsOptional()
-  id: number;
-
+export class ReplaceZoneDto {
   @IsString()
   @MaxLength(30)
   name: string;
