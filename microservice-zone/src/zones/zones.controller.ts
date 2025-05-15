@@ -13,15 +13,18 @@ import { ZonesService } from './zones.service';
 import { CreateZoneDto } from './dto/create-zone.dto';
 import { UpdateZoneDto } from './dto/update-zone.dto';
 import { ReplaceZoneDto } from './dto/replace-zone.dto';
+import { plainToInstance } from 'class-transformer';
+import { ZoneResponseDto } from './dto/zone-response.dto';
 
 @Controller('zones')
 export class ZonesController {
   constructor(private readonly zonesService: ZonesService) {}
 
   @Post()
-  create(@Body() createZoneDto: CreateZoneDto) {
-    return this.zonesService.create(createZoneDto);
-  }
+  async create(@Body() createZoneDto: CreateZoneDto) {
+    const zone = await this.zonesService.create(createZoneDto);
+    return plainToInstance(ZoneResponseDto, zone, { excludeExtraneousValues: true });
+}
 
   @Get()
   findAll() {
