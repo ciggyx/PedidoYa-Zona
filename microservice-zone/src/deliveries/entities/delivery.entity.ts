@@ -16,8 +16,8 @@ export class Delivery {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
-  address: string;
+  @Column({nullable: true})
+  address?: string;
 
   @Column()
   personId: string;
@@ -28,11 +28,11 @@ export class Delivery {
   @Column({ name: 'statusId' })
   statusId: number;
 
-  @ManyToOne(() => DeliveryStatus, (deliveryStatus) => deliveryStatus.delivery)
+  @ManyToOne(() => DeliveryStatus, (deliveryStatus) => deliveryStatus.delivery, {eager: true})
   @JoinColumn({ name: 'statusId' })
   status: DeliveryStatus;
 
-  @OneToOne(() => Location)
+  @OneToOne(() => Location, {cascade: true, eager: true} )
   @JoinColumn()
   location: Location;
 

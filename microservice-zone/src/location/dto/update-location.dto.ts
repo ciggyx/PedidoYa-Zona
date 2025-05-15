@@ -1,4 +1,11 @@
-import { PartialType } from '@nestjs/mapped-types';
-import { CreateLocationDto } from './create-location.dto';
+import { IsNumber, IsOptional } from 'class-validator';
 
-export class UpdateLocationDto extends PartialType(CreateLocationDto) {}
+export class UpdateLocationDto {
+  @IsOptional()
+  @IsNumber()
+  lat?: number;
+
+  @IsOptional()
+  @IsNumber()
+  lng?: number;
+}
