@@ -6,6 +6,8 @@ import { Repository } from 'typeorm';
 import { Zone } from './entities/zone.entity';
 import { Location } from 'src/location/entities/location.entity';
 import { ReplaceZoneDto } from './dto/replace-zone.dto';
+import { plainToInstance } from 'class-transformer';
+import { ZoneResponseDto } from './dto/zone-response.dto';
 
 @Injectable()
 export class ZonesService {
@@ -31,13 +33,18 @@ export class ZonesService {
   }
 
 
-  findAll() {
-    return this.zoneRepository.find();
-  }
+  async findAll(): Promise<ZoneResponseDto[]> {
+    const zones = await this.zoneRepository.find({ relations: ['location'] });
+    return plainToInstance(ZoneResponseDto, zones, { excludeExtraneousValues: true });
+}
 
-  findOne(id: number) {
-    return this.zoneRepository.findOne({ where: { id } });
-  }
+  async findOne(id: number): Promise<ZoneResponseDto> {
+    const zone = await this.zoneRepository.findOne({
+     where: { id },
+      relations: ['location'],
+   });
+     return plainToInstance(ZoneResponseDto, zone, { excludeExtraneousValues: true });
+}
 
   async replace(id: number, dto: ReplaceZoneDto): Promise<Zone> {
     const existingZone = await this.zoneRepository.findOne({
