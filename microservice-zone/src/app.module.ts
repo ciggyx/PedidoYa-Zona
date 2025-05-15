@@ -4,6 +4,7 @@ import { ZonesModule } from './zones/zones.module';
 import { DeliveryStatusModule } from './delivery-status/delivery-status.module';
 import { LocationModule } from './location/location.module';
 import { DeliveriesModule } from './deliveries/deliveries.module';
+import { DeliveryZoneModule } from './delivery-zone/delivery-zone.module';
 
 @Module({
   imports: [
@@ -20,7 +21,8 @@ import { DeliveriesModule } from './deliveries/deliveries.module';
     ZonesModule,
     DeliveryStatusModule,
     LocationModule, 
-    DeliveriesModule],
+    DeliveriesModule,
+    DeliveryZoneModule,],
   controllers: [],
   providers: []
 })

@@ -136,6 +136,10 @@ export class DeliveriesService {
   }
 
   async remove(id: number): Promise<void> {
+    const deliveryExist = await this.deliveryRepository.findOne({ where: { id } });
+    if (!deliveryExist){
+      throw new NotFoundException(`Delivery ${id} not found`); 
+    }
     await this.deliveryRepository.delete(id);
   }
 }
