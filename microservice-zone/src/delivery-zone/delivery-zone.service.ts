@@ -4,6 +4,8 @@ import { In, Repository } from 'typeorm';
 import { DeliveryZone } from './entities/delivery-zone.entity';
 import { Delivery } from '../deliveries/entities/delivery.entity'
 import { Zone } from '../zones/entities/zone.entity'
+import { ZoneResponseDto } from 'src/zones/dto/zone-response.dto';
+import { plainToInstance } from 'class-transformer';
 
 @Injectable()
 export class DeliveryZoneService {
@@ -35,14 +37,16 @@ export class DeliveryZoneService {
       }
     }
   }
-  async getZonesByDeliveryId(deliveryId: number): Promise<Zone[]> {
-    const zones = await this.deliveryZoneRepository.find({
-      where: { deliveryId },
-      relations: ['zone'], // cargamos la zona relacionada
-    });
+  async getZonesByDeliveryId(deliveryId: number): Promise<ZoneResponseDto[]> {
+  const deliveryZones = await this.deliveryZoneRepository.find({
+    where: { deliveryId },
+    relations: ['zone', 'zone.location'], // incluye la zona y su ubicación
+  });
 
-    return zones.map(dz => dz.zone);
-  }
+  const zones = deliveryZones.map(dz => dz.zone);
+
+  return plainToInstance(ZoneResponseDto, zones, { excludeExtraneousValues: true });
+}
 
   async unassignZone(deliveryId: number, zoneId: number): Promise<void> {
     const exists = await this.deliveryZoneRepository.findOneBy({ deliveryId, zoneId });
