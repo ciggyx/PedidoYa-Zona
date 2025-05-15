@@ -1,7 +1,6 @@
 import { Type } from 'class-transformer';
 import {
   IsInt,
-  IsOptional,
   IsPositive,
   IsString,
   MaxLength,
@@ -10,11 +9,6 @@ import {
 import { CreateLocationDto } from 'src/location/dto/create-location.dto';
 
 export class CreateZoneDto {
-  @IsInt()
-  @IsPositive()
-  @IsOptional()
-  id: number;
-
   @IsString()
   @MaxLength(30)
   name: string;
@@ -27,3 +21,4 @@ export class CreateZoneDto {
   @Type(() => CreateLocationDto)
   location: CreateLocationDto;
 }
+
