@@ -2,6 +2,8 @@ import { Controller, Get, Post, Body, Param, Delete, ParseIntPipe } from '@nestj
 import { DeliveryZoneService } from './delivery-zone.service';
 import { CreateDeliveryZones } from './dto/delivery-zone.dto';
 
+import { ZoneResponseDto } from '../zones/dto/zone-response.dto';
+
 @Controller('delivery')
 export class DeliveryZoneController {
   constructor(private readonly deliveryZoneService: DeliveryZoneService) {}
@@ -16,10 +18,10 @@ export class DeliveryZoneController {
   }
 
   @Get(':id/zones')
-  async getZones(@Param('id', ParseIntPipe) id: number) {
-    const zones = await this.deliveryZoneService.getZonesByDeliveryId(id);
-    return zones;
+    findZones(@Param('id', ParseIntPipe) id: number) {
+      return this.deliveryZoneService.getZonesByDeliveryId(id);
   }
+
 
   @Delete(':id/zone/:zoneId')
   async removeZone(
