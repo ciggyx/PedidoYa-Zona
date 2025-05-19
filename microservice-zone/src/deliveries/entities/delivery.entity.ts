@@ -10,14 +10,14 @@ import {
 } from 'typeorm';
 import { Location } from 'src/location/entities/location.entity';
 import { DeliveryStatus } from 'src/delivery-status/entities/delivery-status.entity';
-import { Zone } from 'src/zones/entities/zone.entity';
+
 @Entity('deliveries')
 export class Delivery {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
-  address: string;
+  @Column({nullable: true})
+  address?: string;
 
   @Column()
   personId: string;
@@ -28,17 +28,13 @@ export class Delivery {
   @Column({ name: 'statusId' })
   statusId: number;
 
-  @ManyToOne(() => DeliveryStatus, (deliveryStatus) => deliveryStatus.delivery)
+  @ManyToOne(() => DeliveryStatus, (deliveryStatus) => deliveryStatus.delivery, {eager: true})
   @JoinColumn({ name: 'statusId' })
   status: DeliveryStatus;
 
-  @OneToOne(() => Location)
+  @OneToOne(() => Location, {cascade: true, eager: true} )
   @JoinColumn()
   location: Location;
-
-  @ManyToMany(() => Zone)
-  @JoinTable({ name: 'DeliveryPerZone' })
-  zones: Zone[];
 
   constructor(
     id: number,

@@ -9,8 +9,9 @@ export class DeliveryStatusController {
 
   @Post()
   create(@Body() createDeliveryStatusDto: CreateDeliveryStatusDto) {
-    return this.deliveryStatusService.create(createDeliveryStatusDto);
-  }
+  return this.deliveryStatusService.create(createDeliveryStatusDto);
+}
+
 
   @Get()
   findAll() {
