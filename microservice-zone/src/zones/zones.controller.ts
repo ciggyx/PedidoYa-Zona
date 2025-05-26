@@ -8,6 +8,7 @@ import {
   Delete,
   ValidationPipe,
   Put,
+  Query
 } from '@nestjs/common';
 import { ZonesService } from './zones.service';
 import { CreateZoneDto } from './dto/create-zone.dto';
@@ -15,7 +16,6 @@ import { UpdateZoneDto } from './dto/update-zone.dto';
 import { ReplaceZoneDto } from './dto/replace-zone.dto';
 import { plainToInstance } from 'class-transformer';
 import { ZoneResponseDto } from './dto/zone-response.dto';
-
 @Controller('zones')
 export class ZonesController {
   constructor(private readonly zonesService: ZonesService) {}
@@ -27,8 +27,11 @@ export class ZonesController {
 }
 
   @Get()
-  findAll() {
-    return this.zonesService.findAll();
+  findAll(
+    @Query('page') page: string = '1',
+    @Query('quantity') quantity: string = '10',
+  ) {
+    return this.zonesService.findAll(+page, +quantity);
   }
 
   @Get(':id')
