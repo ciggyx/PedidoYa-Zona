@@ -33,17 +33,26 @@ export class ZonesService {
   }
 
 
-  async findAll(): Promise<ZoneResponseDto[]> {
-    const zones = await this.zoneRepository.find({ relations: ['location'] });
-    return plainToInstance(ZoneResponseDto, zones, { excludeExtraneousValues: true });
+  async findAll(page = 1, quantity = 10) {
+    const skip = (page - 1) * quantity;
+
+    const [zones] = await this.zoneRepository.findAndCount({
+      relations: ['location'],
+      skip,
+      take: quantity,
+    });
+
+    return zones.map(zone =>
+      plainToInstance(ZoneResponseDto, zone, { excludeExtraneousValues: true })
+    );
 }
 
   async findOne(id: number): Promise<ZoneResponseDto> {
     const zone = await this.zoneRepository.findOne({
-     where: { id },
+      where: { id },
       relations: ['location'],
    });
-     return plainToInstance(ZoneResponseDto, zone, { excludeExtraneousValues: true });
+    return plainToInstance(ZoneResponseDto, zone, { excludeExtraneousValues: true });
 }
 
   async replace(id: number, dto: ReplaceZoneDto): Promise<Zone> {
