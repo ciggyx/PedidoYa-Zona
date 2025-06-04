@@ -9,21 +9,22 @@ import { DeliveryZoneModule } from './delivery-zone/delivery-zone.module';
 @Module({
   imports: [
     TypeOrmModule.forRoot({
-    type: 'postgres',
-    host: 'localhost',
-    port: 5432,
-    username: 'postgres',
-    password: 'examplepassword',
-    database: "users",
-    autoLoadEntities: true,
-    synchronize: true,
+      type: 'postgres',
+      host: 'localhost',
+      port: 5432,
+      username: 'postgres',
+      password: 'examplepassword',
+      database: 'users',
+      autoLoadEntities: true,
+      synchronize: true,
     }),
     ZonesModule,
     DeliveryStatusModule,
-    LocationModule, 
+    LocationModule,
     DeliveriesModule,
-    DeliveryZoneModule,],
+    DeliveryZoneModule,
+  ],
   controllers: [],
-  providers: []
+  providers: [],
 })
 export class AppModule {}

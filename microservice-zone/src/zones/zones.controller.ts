@@ -8,7 +8,8 @@ import {
   Delete,
   ValidationPipe,
   Put,
-  Query
+  Query,
+  UseGuards,
 } from '@nestjs/common';
 import { ZonesService } from './zones.service';
 import { CreateZoneDto } from './dto/create-zone.dto';
@@ -16,6 +17,8 @@ import { UpdateZoneDto } from './dto/update-zone.dto';
 import { ReplaceZoneDto } from './dto/replace-zone.dto';
 import { plainToInstance } from 'class-transformer';
 import { ZoneResponseDto } from './dto/zone-response.dto';
+import { Permissions } from 'src/middlewares/decorators/permissions.decorator';
+import { AuthGuard } from 'src/middlewares/auth.middleware';
 @Controller('zones')
 export class ZonesController {
   constructor(private readonly zonesService: ZonesService) {}
@@ -23,8 +26,10 @@ export class ZonesController {
   @Post()
   async create(@Body() createZoneDto: CreateZoneDto) {
     const zone = await this.zonesService.create(createZoneDto);
-    return plainToInstance(ZoneResponseDto, zone, { excludeExtraneousValues: true });
-}
+    return plainToInstance(ZoneResponseDto, zone, {
+      excludeExtraneousValues: true,
+    });
+  }
 
   @Get()
   findAll(
@@ -34,6 +39,8 @@ export class ZonesController {
     return this.zonesService.findAll(+page, +quantity);
   }
 
+  @UseGuards(AuthGuard)
+  @Permissions(['test'])
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.zonesService.findOne(+id);
