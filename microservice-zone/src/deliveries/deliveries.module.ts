@@ -4,9 +4,10 @@ import { DeliveriesController } from './deliveries.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Delivery } from './entities/delivery.entity';
 import { Location } from 'src/location/entities/location.entity';
+import { Zone } from 'src/zones/entities/zone.entity';
 import { DeliveryStatus } from 'src/delivery-status/entities/delivery-status.entity';
 @Module({
-  imports: [TypeOrmModule.forFeature([Delivery, Location, DeliveryStatus])],
+  imports: [TypeOrmModule.forFeature([Delivery, Location, DeliveryStatus, Zone])],
   controllers: [DeliveriesController],
   providers: [DeliveriesService],
 })

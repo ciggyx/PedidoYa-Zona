@@ -5,11 +5,11 @@ import {
   PrimaryGeneratedColumn,
   OneToOne,
   ManyToOne,
-  ManyToMany,
-  JoinTable,
+  OneToMany,
 } from 'typeorm';
 import { Location } from 'src/location/entities/location.entity';
 import { DeliveryStatus } from 'src/delivery-status/entities/delivery-status.entity';
+import { DeliveryZone } from 'src/delivery-zone/entities/delivery-zone.entity';
 
 @Entity('deliveries')
 export class Delivery {
@@ -25,8 +25,8 @@ export class Delivery {
   @Column('double precision')
   radius: number;
 
-  @Column({ name: 'statusId' })
-  statusId: number;
+  @OneToMany(() => DeliveryZone, dz => dz.delivery)
+  deliveryZones: DeliveryZone[];
 
   @ManyToOne(() => DeliveryStatus, (deliveryStatus) => deliveryStatus.delivery, {eager: true})
   @JoinColumn({ name: 'statusId' })

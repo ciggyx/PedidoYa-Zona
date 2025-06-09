@@ -18,25 +18,6 @@ export class DeliveryZoneService {
     private readonly zoneRepository: Repository<Zone>,
   ) {}
 
-  async assignZonesToDelivery(deliveryId: number, zoneIds: number[]): Promise<void> {
-    const delivery = await this.deliveryRepository.findOne({ where: { id: deliveryId } });
-    if (!delivery) {
-      throw new NotFoundException(`Delivery "${deliveryId}" not found`);
-    }
-
-    const zones = await this.zoneRepository.findBy({id: In(zoneIds)});
-    if (zones.length !== zoneIds.length) {
-      throw new NotFoundException(`One or more zones not found`);
-    }
-
-    for (const zoneId of zoneIds) {
-      const exists = await this.deliveryZoneRepository.findOneBy({ deliveryId, zoneId });
-      if (!exists) {
-        const dz = this.deliveryZoneRepository.create({ deliveryId, zoneId });
-        await this.deliveryZoneRepository.save(dz);
-      }
-    }
-  }
   async getZonesByDeliveryId(deliveryId: number): Promise<ZoneResponseDto[]> {
   const deliveryZones = await this.deliveryZoneRepository.find({
     where: { deliveryId },
