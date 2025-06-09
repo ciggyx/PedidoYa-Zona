@@ -8,31 +8,41 @@ import {
   Delete,
   Put,
   ParseIntPipe,
+  Query,
 } from '@nestjs/common';
 import { DeliveriesService } from './deliveries.service';
 import { CreateDeliveryDto } from './dto/create-delivery.dto';
+import { FindByProximityDto } from './dto/findByProximity.dto';
 import { UpdateDeliveryDto } from './dto/update-delivery.dto';
 import { UpdateLocationDto } from './dto/updateLocation.dto';
 import { Delivery } from './entities/delivery.entity';
 import { CreateLocationDto } from 'src/location/dto/create-location.dto';
 import { UpdateStatusDto } from './dto/updateStatus.dto';
 import { DeliveryResponseDto } from './dto/deliveryResponse.dto';
+import { DeliveryWithZonesDto } from './dto/DeliveryWithZones.dto';
+import { FindByZoneDto } from './dto/findByZone.dto';
+import { AssignZoneDto } from './dto/AssignZone.dto';
 
 @Controller('deliveries')
 export class DeliveriesController {
   constructor(private readonly deliveriesService: DeliveriesService) {}
 
-  @Post(':id/assignZone')
+@Get('findByProximity')
+findByProximity(@Query() dto: FindByProximityDto): Promise<DeliveryWithZonesDto[]> {
+  return this.deliveriesService.findByProximity(dto);
+}
+
+@Get('findByZone')
+findByZone(@Query() dto: FindByZoneDto): Promise<DeliveryWithZonesDto[]> {
+  return this.deliveriesService.findByZone(dto);
+}
+
+@Post(':id/assignZone')
   assignZone(
     @Param('id', ParseIntPipe) id: number,
     @Body() dto: AssignZoneDto,
-  ): Promise<Delivery> {
+  ): Promise<DeliveryWithZonesDto> {
     return this.deliveriesService.assignZones(id, dto);
-  }
-
-  @Post()
-  create(@Body() createDeliveryDto: CreateDeliveryDto) {
-    return this.deliveriesService.create(createDeliveryDto);
   }
 
   @Get()

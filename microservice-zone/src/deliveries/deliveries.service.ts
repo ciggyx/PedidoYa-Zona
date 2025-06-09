@@ -3,7 +3,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { In, Repository } from 'typeorm';
 import { CreateDeliveryDto } from './dto/create-delivery.dto';
 import { UpdateDeliveryDto } from './dto/update-delivery.dto';
-import { AssignZoneDto } from './dto/assign-zone.dto';
 import { Zone } from 'src/zones/entities/zone.entity';
 import { Delivery } from './entities/delivery.entity';
 import { Location } from 'src/location/entities/location.entity';
@@ -11,6 +10,11 @@ import { DeliveryStatus } from 'src/delivery-status/entities/delivery-status.ent
 import { UpdateLocationDto } from './dto/updateLocation.dto';
 import { DeliveryResponseDto } from './dto/deliveryResponse.dto';
 import { UpdateStatusDto } from './dto/updateStatus.dto';
+import { FindByProximityDto } from './dto/findByProximity.dto';
+import { FindByZoneDto } from './dto/findByZone.dto';
+import { DeliveryWithZonesDto } from './dto/DeliveryWithZones.dto';
+import { DeliveryZone } from 'src/delivery-zone/entities/delivery-zone.entity';
+import { AssignZoneDto } from './dto/AssignZone.dto';
 
 @Injectable()
 export class DeliveriesService {
@@ -26,7 +30,138 @@ export class DeliveriesService {
 
     @InjectRepository(Zone)
     private readonly ZoneRepository: Repository<Zone>,
+
+    @InjectRepository(DeliveryZone)
+    private readonly DeliveryZoneRepository: Repository<DeliveryZone>,
   ) {}
+
+  async findByZone(dto: FindByZoneDto): Promise<DeliveryWithZonesDto[]> {
+    const { zoneId, page = 1, quantity = 10 } = dto;
+
+    const deliveries = await this.deliveryRepository
+      .createQueryBuilder('delivery')
+      .leftJoinAndSelect('delivery.status', 'status')
+      .leftJoinAndSelect('delivery.location', 'location')
+      .innerJoin('delivery.deliveryZones', 'dz')
+      .innerJoinAndSelect('dz.zone', 'zone')
+      .where('zone.id = :zoneId', { zoneId })
+      .getMany();
+
+      const start = (page - 1) * quantity;
+      const paged = deliveries.slice(start, start + quantity);
+
+      return paged.map(del => ({
+        id: del.id,
+        personId: del.personId,
+        location: del.location,
+        radius: del.radius,
+        status: del.status,
+        zones: del.deliveryZones.map(dz => dz.zone),
+      }))
+
+    }
+
+  async findByProximity(
+  dto: FindByProximityDto
+): Promise<DeliveryWithZonesDto[]> {
+  const { lat, lng, radius, page = 1, quantity = 10 } = dto;
+
+  const deliveries = await this.deliveryRepository
+    .createQueryBuilder('delivery')
+    .leftJoinAndSelect('delivery.status', 'status')
+    .leftJoinAndSelect('delivery.location', 'location')         
+    .innerJoin('delivery.deliveryZones', 'dz')                  
+    .innerJoinAndSelect('dz.zone', 'zone')
+    .getMany();
+
+  const nearby = deliveries
+    .map(delivery => ({
+      delivery,
+      distance: this.calculateDistance(
+        lat, lng,
+        delivery.location.lat,
+        delivery.location.lng,
+      )
+    }))
+    .filter(({ distance }) => distance <= radius)
+    .sort((a, b) => a.distance - b.distance)
+    .map(({ delivery }) => delivery);
+
+  const start = (page - 1) * quantity;
+  const paged = nearby.slice(start, start + quantity);
+
+  const result: DeliveryWithZonesDto[] = paged.map(delivery => ({
+    id: delivery.id,
+    personId: delivery.personId,
+    location: delivery.location,
+    radius: delivery.radius,
+    status: delivery.status,
+    zones: delivery.deliveryZones.map(dz => dz.zone),
+  }));
+
+  return result;
+}
+  
+  private calculateDistance(lat1: number, lng1: number, lat2: number, lng2: number): number {
+    const R = 6371;
+    const toRad = (v: number) => (v * Math.PI) / 180;
+    const dLat = toRad(lat2 - lat1);
+    const dLng = toRad(lng2 - lng1);
+
+    const a =
+      Math.sin(dLat / 2) ** 2 +
+      Math.cos(toRad(lat1)) *
+        Math.cos(toRad(lat2)) *
+        Math.sin(dLng / 2) ** 2;
+
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    return R * c;
+  }
+
+  async assignZones(
+  deliveryId: number,
+  dto: AssignZoneDto
+): Promise<DeliveryWithZonesDto> {
+
+  const delivery = await this.deliveryRepository.findOne({
+    where: { id: deliveryId },
+    relations: ['status', 'location'],
+  });
+  if (!delivery) {
+    throw new NotFoundException(`Delivery con id ${deliveryId} no existe`);
+  }
+
+  const zones = await this.ZoneRepository.findBy({
+    id: In(dto.zoneIds),
+  });
+  if (zones.length !== dto.zoneIds.length) {
+    throw new NotFoundException(`Alguna zona enviada no existe`);
+  }
+
+  await this.DeliveryZoneRepository.delete({ deliveryId });
+
+  const newLinks = dto.zoneIds.map(zoneId =>
+    this.DeliveryZoneRepository.create({ deliveryId, zoneId })
+  );
+  await this.DeliveryZoneRepository.save(newLinks);
+
+  const deliveryZones = await this.DeliveryZoneRepository.find({
+    where: { deliveryId },
+    relations: ['zone'],
+  });
+  const assignedZones = deliveryZones.map(dz => dz.zone);
+
+  const dtoResult: DeliveryWithZonesDto = {
+    id: delivery.id,
+    personId: delivery.personId,
+    location: delivery.location,
+    radius: delivery.radius,
+    status: delivery.status,
+    zones: assignedZones,
+  };
+
+  return dtoResult;
+}
 
   async create(createDeliveryDto: CreateDeliveryDto): Promise<Delivery> {
     const { location, statusId, ...rest } = createDeliveryDto;
@@ -146,23 +281,6 @@ export class DeliveriesService {
       throw new NotFoundException(`Delivery ${id} not found`); 
     }
     await this.deliveryRepository.delete(id);
-  }
-
-  async assignZones(deliveryId: number, dto: AssignZoneDto): Promise<Delivery> {
-    const delivery = await this.deliveryRepository.findOne({ where: { id: deliveryId } });
-    if (!delivery) {
-      throw new NotFoundException(`Delivery con id ${deliveryId} no existe`);
-    }
-
-    const zones = await this.ZoneRepository.find({
-      where: { id: In(dto.zoneIds) },
-    });
-    if (zones.length !== dto.zoneIds.length) {
-      throw new NotFoundException(`Alguna zona enviada no existe`);
-    }
-
-    delivery.zones = zones;
-    return this.deliveryRepository.save(delivery);
   }
 
 }

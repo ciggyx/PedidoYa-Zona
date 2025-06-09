@@ -8,15 +8,6 @@ import { ZoneResponseDto } from '../zones/dto/zone-response.dto';
 export class DeliveryZoneController {
   constructor(private readonly deliveryZoneService: DeliveryZoneService) {}
 
-  @Post(':id/assignZone')
-  async assign(
-    @Param('id', ParseIntPipe) id: number,
-    @Body() body: CreateDeliveryZones,
-  ) {
-    await this.deliveryZoneService.assignZonesToDelivery(id, body.zoneIds);
-      return { message: 'Zones assigned successfully' };
-  }
-
   @Get(':id/zones')
     findZones(@Param('id', ParseIntPipe) id: number) {
       return this.deliveryZoneService.getZonesByDeliveryId(id);
