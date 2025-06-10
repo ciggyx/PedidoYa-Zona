@@ -32,7 +32,6 @@ export class ZonesService {
     return await this.zoneRepository.save(zone);
   }
 
-
   async findAll(page = 1, quantity = 10) {
     const skip = (page - 1) * quantity;
 
@@ -42,18 +41,20 @@ export class ZonesService {
       take: quantity,
     });
 
-    return zones.map(zone =>
-      plainToInstance(ZoneResponseDto, zone, { excludeExtraneousValues: true })
+    return zones.map((zone) =>
+      plainToInstance(ZoneResponseDto, zone, { excludeExtraneousValues: true }),
     );
-}
+  }
 
   async findOne(id: number): Promise<ZoneResponseDto> {
     const zone = await this.zoneRepository.findOne({
       where: { id },
       relations: ['location'],
-   });
-    return plainToInstance(ZoneResponseDto, zone, { excludeExtraneousValues: true });
-}
+    });
+    return plainToInstance(ZoneResponseDto, zone, {
+      excludeExtraneousValues: true,
+    });
+  }
 
   async replace(id: number, dto: ReplaceZoneDto): Promise<Zone> {
     const existingZone = await this.zoneRepository.findOne({
@@ -99,7 +100,7 @@ export class ZonesService {
     return await this.zoneRepository.save(zone);
   }
 
-  async remove(id: number): Promise<void> {
+  async remove(id: number): Promise<{ message: string }> {
     const zone = await this.zoneRepository.findOne({ where: { id } });
 
     if (!zone) {
@@ -107,5 +108,9 @@ export class ZonesService {
     }
 
     await this.zoneRepository.remove(zone);
+
+    return {
+      message: 'Zone deleted',
+    };
   }
 }
