@@ -69,7 +69,7 @@ export class DeliveriesService {
       .createQueryBuilder('delivery')
       .leftJoinAndSelect('delivery.status', 'status')
       .leftJoinAndSelect('delivery.location', 'location')
-      .innerJoin('delivery.deliveryZones', 'dz')
+      .innerJoinAndSelect('delivery.deliveryZones', 'dz')
       .innerJoinAndSelect('dz.zone', 'zone')
       .getMany();
 
