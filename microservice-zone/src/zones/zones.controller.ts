@@ -39,8 +39,6 @@ export class ZonesController {
     return this.zonesService.findAll(+page, +quantity);
   }
 
-  @UseGuards(AuthGuard)
-  @Permissions(['test'])
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.zonesService.findOne(+id);
