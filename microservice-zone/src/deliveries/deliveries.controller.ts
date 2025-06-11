@@ -27,17 +27,23 @@ import { AssignZoneDto } from './dto/AssignZone.dto';
 export class DeliveriesController {
   constructor(private readonly deliveriesService: DeliveriesService) {}
 
-@Get('findByProximity')
-findByProximity(@Query() dto: FindByProximityDto): Promise<DeliveryWithZonesDto[]> {
-  return this.deliveriesService.findByProximity(dto);
-}
+  @Post()
+  create(@Body() createDeliveryDto: CreateDeliveryDto) {
+    return this.deliveriesService.create(createDeliveryDto);
+  }
+  @Get('findByProximity')
+  findByProximity(
+    @Query() dto: FindByProximityDto,
+  ): Promise<DeliveryWithZonesDto[]> {
+    return this.deliveriesService.findByProximity(dto);
+  }
 
-@Get('findByZone')
-findByZone(@Query() dto: FindByZoneDto): Promise<DeliveryWithZonesDto[]> {
-  return this.deliveriesService.findByZone(dto);
-}
+  @Get('findByZone')
+  findByZone(@Query() dto: FindByZoneDto): Promise<DeliveryWithZonesDto[]> {
+    return this.deliveriesService.findByZone(dto);
+  }
 
-@Post(':id/assignZone')
+  @Post(':id/assignZone')
   assignZone(
     @Param('id', ParseIntPipe) id: number,
     @Body() dto: AssignZoneDto,
