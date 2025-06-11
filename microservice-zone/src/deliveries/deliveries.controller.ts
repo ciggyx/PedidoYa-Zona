@@ -86,7 +86,8 @@ export class DeliveriesController {
   }
 
   @Delete(':id')
-  remove(@Param('id') id: number) {
-    return this.deliveriesService.remove(+id);
+  async remove(@Param('id', ParseIntPipe) id: number) {
+    await this.deliveriesService.remove(id);
+  return { message: `Delivery ${id} deleted` };
   }
 }

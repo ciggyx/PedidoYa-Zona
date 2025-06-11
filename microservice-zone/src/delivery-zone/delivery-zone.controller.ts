@@ -1,16 +1,17 @@
-import { Controller, Get, Post, Body, Param, Delete, ParseIntPipe } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Delete, ParseIntPipe, Query } from '@nestjs/common';
 import { DeliveryZoneService } from './delivery-zone.service';
-import { CreateDeliveryZones } from './dto/delivery-zone.dto';
-
-import { ZoneResponseDto } from '../zones/dto/zone-response.dto';
 
 @Controller('delivery')
 export class DeliveryZoneController {
   constructor(private readonly deliveryZoneService: DeliveryZoneService) {}
 
   @Get(':id/zones')
-    findZones(@Param('id', ParseIntPipe) id: number) {
-      return this.deliveryZoneService.getZonesByDeliveryId(id);
+  findZones(
+    @Param('id', ParseIntPipe) id: number,
+    @Query('page') page = 1,
+    @Query('limit') limit = 10,
+  ) {
+  return this.deliveryZoneService.getZonesByDeliveryId(id, Number(page), Number(limit));
   }
 
 
