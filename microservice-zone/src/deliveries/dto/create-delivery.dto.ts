@@ -1,10 +1,19 @@
-import { IsString, MinLength, IsInt, IsPositive, MaxLength, IsObject, ValidateNested, IsOptional } from "class-validator";
-import {Type} from "class-transformer";
-import { CreateLocationDto } from "src/location/dto/create-location.dto";
+import {
+  IsString,
+  MinLength,
+  IsInt,
+  IsPositive,
+  MaxLength,
+  IsObject,
+  ValidateNested,
+  IsOptional,
+} from 'class-validator';
+import { Type } from 'class-transformer';
+import { CreateLocationDto } from 'src/location/dto/create-location.dto';
 export class CreateDeliveryDto {
-// Esto la información que nosotros vamos a permitir que el cliente nos envíe hacia el controlador.
-//También vamos a realizar las validaciones
-  
+  // Esto la información que nosotros vamos a permitir que el cliente nos envíe hacia el controlador.
+  //También vamos a realizar las validaciones
+
   @IsInt()
   @IsPositive()
   @IsOptional()
@@ -16,7 +25,6 @@ export class CreateDeliveryDto {
   address?: string;
 
   @IsString()
-  @MinLength(3)
   personId: string;
 
   @IsInt()
@@ -32,5 +40,4 @@ export class CreateDeliveryDto {
   //El type lo utilizamos para usar la clase CreateLocationDto que es un objeto anidado, osea es un objeto que usamos dentro de Delivery.
   @Type(() => CreateLocationDto)
   location: CreateLocationDto;
-
 }
