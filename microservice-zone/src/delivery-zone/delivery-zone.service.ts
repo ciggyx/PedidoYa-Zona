@@ -2,31 +2,30 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { In, Repository } from 'typeorm';
 import { DeliveryZone } from './entities/delivery-zone.entity';
-import { Delivery } from '../deliveries/entities/delivery.entity'
-import { Zone } from '../zones/entities/zone.entity'
 import { ZoneResponseDto } from 'src/zones/dto/zone-response.dto';
 import { plainToInstance } from 'class-transformer';
+import { PaginationResultDto } from './dto/paginacion-delivery-zone.dto';
 
 @Injectable()
 export class DeliveryZoneService {
   constructor(
     @InjectRepository(DeliveryZone)
     private readonly deliveryZoneRepository: Repository<DeliveryZone>,
-    @InjectRepository(Delivery)
-    private readonly deliveryRepository: Repository<Delivery>,
-    @InjectRepository(Zone)
-    private readonly zoneRepository: Repository<Zone>,
   ) {}
 
-  async getZonesByDeliveryId(deliveryId: number): Promise<ZoneResponseDto[]> {
-  const deliveryZones = await this.deliveryZoneRepository.find({
+async getZonesByDeliveryId(deliveryId: number, page = 1, limit = 10,): Promise<PaginationResultDto<ZoneResponseDto>> {
+  const [deliveryZones, total] = await this.deliveryZoneRepository.findAndCount({
     where: { deliveryId },
-    relations: ['zone', 'zone.location'], // incluye la zona y su ubicación
+    relations: ['zone', 'zone.location'],
+    skip: (page - 1) * limit,
+    take: limit,
   });
 
   const zones = deliveryZones.map(dz => dz.zone);
 
-  return plainToInstance(ZoneResponseDto, zones, { excludeExtraneousValues: true });
+  return {zones: plainToInstance(ZoneResponseDto, zones, { excludeExtraneousValues: true }), total, page,
+  };
+
 }
 
   async unassignZone(deliveryId: number, zoneId: number): Promise<void> {
