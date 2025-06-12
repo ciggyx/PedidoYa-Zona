@@ -1,5 +1,7 @@
-import { Controller, Get, Post, Body, Param, Delete, ParseIntPipe, Query } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Delete, ParseIntPipe, Query, UseGuards } from '@nestjs/common';
 import { DeliveryZoneService } from './delivery-zone.service';
+import { Permissions } from 'src/middlewares/decorators/permissions.decorator';
+import { AuthGuard } from 'src/middlewares/auth.middleware';
 
 @Controller('delivery')
 @UseGuards(AuthGuard)

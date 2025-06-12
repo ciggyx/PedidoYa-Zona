@@ -44,7 +44,7 @@ export class DeliveriesController {
   }
 
   @Get('findByZone')
-  @Permissions(['getDevlieryByZone'])
+  @Permissions(['getDeliveryByZone'])
   findByZone(@Query() dto: FindByZoneDto): Promise<DeliveryWithZonesDto[]> {
     return this.deliveriesService.findByZone(dto);
   }
