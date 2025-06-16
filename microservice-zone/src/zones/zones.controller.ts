@@ -19,7 +19,7 @@ import { plainToInstance } from 'class-transformer';
 import { ZoneResponseDto } from './dto/zone-response.dto';
 import { Permissions } from 'src/middlewares/decorators/permissions.decorator';
 import { AuthGuard } from 'src/middlewares/auth.middleware';
-@Controller('zones')
+@Controller('zone')
 @UseGuards(AuthGuard)
 export class ZonesController {
   constructor(private readonly zonesService: ZonesService) {}
