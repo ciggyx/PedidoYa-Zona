@@ -43,6 +43,7 @@ export class ZonesController {
   }
 
   @Get(':id')
+  @Permissions(['getZone'])
   findOne(@Param('id') id: string) {
     return this.zonesService.findOne(+id);
   }

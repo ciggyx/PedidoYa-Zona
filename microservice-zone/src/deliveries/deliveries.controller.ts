@@ -50,7 +50,7 @@ export class DeliveriesController {
   }
 
   @Post(':id/assignZone')
-  @Permissions(['assingZone'])
+  @Permissions(['assignZone'])
   assignZone(
     @Param('id', ParseIntPipe) id: number,
     @Body() dto: AssignZoneDto,
@@ -98,8 +98,9 @@ export class DeliveriesController {
   }
 
   @Delete(':id')
+  @Permissions(['deleteDelivery'])
   async remove(@Param('id', ParseIntPipe) id: number) {
     await this.deliveriesService.remove(id);
-  return { message: `Delivery ${id} deleted` };
+    return { message: `Delivery ${id} deleted` };
   }
 }
