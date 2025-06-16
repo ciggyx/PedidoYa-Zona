@@ -25,7 +25,7 @@ import { AssignZoneDto } from './dto/AssignZone.dto';
 import { Permissions } from 'src/middlewares/decorators/permissions.decorator';
 import { AuthGuard } from 'src/middlewares/auth.middleware';
 
-@Controller('deliveries')
+@Controller('delivery')
 @UseGuards(AuthGuard)
 export class DeliveriesController {
   constructor(private readonly deliveriesService: DeliveriesService) {}
