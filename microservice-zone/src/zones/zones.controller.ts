@@ -20,10 +20,12 @@ import { ZoneResponseDto } from './dto/zone-response.dto';
 import { Permissions } from 'src/middlewares/decorators/permissions.decorator';
 import { AuthGuard } from 'src/middlewares/auth.middleware';
 @Controller('zones')
+@UseGuards(AuthGuard)
 export class ZonesController {
   constructor(private readonly zonesService: ZonesService) {}
 
   @Post()
+  @Permissions(['createZone'])
   async create(@Body() createZoneDto: CreateZoneDto) {
     const zone = await this.zonesService.create(createZoneDto);
     return plainToInstance(ZoneResponseDto, zone, {
@@ -32,6 +34,7 @@ export class ZonesController {
   }
 
   @Get()
+  @Permissions(['getZones'])
   findAll(
     @Query('page') page: string = '1',
     @Query('quantity') quantity: string = '10',
@@ -39,14 +42,13 @@ export class ZonesController {
     return this.zonesService.findAll(+page, +quantity);
   }
 
-  @UseGuards(AuthGuard)
-  @Permissions(['test'])
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.zonesService.findOne(+id);
   }
 
   @Put(':id')
+  @Permissions(['updateZone'])
   replace(
     @Param('id') id: string,
     @Body(new ValidationPipe({ whitelist: true, transform: true }))
@@ -55,8 +57,8 @@ export class ZonesController {
     return this.zonesService.replace(Number(id), replaceZoneDto);
   }
 
-  // Updatea parcialmente !!
   @Patch(':id')
+  @Permissions(['partialUpdate'])
   update(
     @Param('id') id: string,
     @Body(new ValidationPipe({ whitelist: true, transform: true }))
@@ -66,6 +68,7 @@ export class ZonesController {
   }
 
   @Delete(':id')
+  @Permissions(['deleteZone'])
   remove(@Param('id') id: string) {
     return this.zonesService.remove(+id);
   }
