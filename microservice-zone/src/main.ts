@@ -4,10 +4,17 @@ import { ValidationPipe } from '@nestjs/common';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  //Agregamos un prefix o ruta base a todas las rutas de la API. Es opcional pero buena practica
+
+  app.enableCors({
+    origin: 'http://localhost:4200',
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+    credentials: true,
+    allowedHeaders: 'Content-Type, Accept, Authorization',
+  });
+  // ---------------------------------------
+
   app.setGlobalPrefix('api/v1');
 
-  //Configramos las validaciones de los DTOs (Data transfer objects). Para que manden los datos correctos
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,
@@ -15,6 +22,8 @@ async function bootstrap() {
       transform: true,
     }),
   );
+
   await app.listen(process.env.PORT ?? 3000);
+  console.log(`Application is running on: ${await app.getUrl()}`);
 }
 bootstrap();
