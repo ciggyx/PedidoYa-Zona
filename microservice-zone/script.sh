@@ -3,8 +3,8 @@
 # Login y servicios
 LOGIN_URL="http://localhost:3001/login"
 API_URL="http://localhost:3000"
-EMAIL="pepito@normal.com"
-PASSWORD="pepito"
+EMAIL="matias@gmail.com"
+PASSWORD="matias"
 HEADER_JSON="Content-Type: application/json"
 
 echo ">>> Iniciando sesión con usuario $EMAIL..."
