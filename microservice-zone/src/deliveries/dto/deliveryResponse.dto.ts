@@ -6,5 +6,8 @@ export class DeliveryResponseDto {
     lat: number;
     lng: number;
   };
-  status: string;
+  status: {
+    id: number;
+    name: string;
+  };
 }

@@ -251,12 +251,12 @@ export class DeliveriesService {
     }
 
     const newStatus = await this.deliveryStatusRepository.findOneBy({
-      name: dto.status,
+      id: dto.statusId,
     });
 
     if (!newStatus) {
       throw new NotFoundException(
-        `DeliveryStatus with name "${dto.status}" not found`,
+        `DeliveryStatus with name "${dto.statusId}" not found`,
       );
     }
 
@@ -271,7 +271,10 @@ export class DeliveriesService {
         lat: delivery.location.lat,
         lng: delivery.location.lng,
       },
-      status: delivery.status.name,
+      status: {
+        id: newStatus.id,
+        name: newStatus.name,
+    },
     };
 
     return response;
