@@ -34,7 +34,7 @@ export class ZonesController {
   }
 
   @Get()
-  @Permissions(['getZones'])
+  @Permissions(['getZone'])
   findAll(
     @Query('page') page: string = '1',
     @Query('quantity') quantity: string = '10',
